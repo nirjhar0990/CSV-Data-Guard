@@ -52,6 +52,41 @@ def remove_duplicate_rows(df):
 
     return cleaned_df
 
+def get_removed_duplicate_rows(df):
+    """
+    Return only the rows that would be removed by the cleaner's
+    duplicate-row step.
+
+    Duplicate detection follows the same semantics as clean_data():
+      - missing markers are standardized first,
+      - Record_ID is excluded from duplicate comparison,
+      - the first occurrence is retained,
+      - only later duplicate occurrences are returned.
+    """
+
+    normalized_df = standardize_missing_values(
+        df
+    )
+
+    duplicate_columns = [
+        column
+        for column in normalized_df.columns
+        if column != "Record_ID"
+    ]
+
+    removed_mask = (
+        normalized_df.duplicated(
+            subset=duplicate_columns,
+            keep="first"
+        )
+    )
+
+    return (
+        df.loc[
+            removed_mask
+        ]
+        .copy()
+    )
 
 # ================================================================
 # 3. Clean Text Casing

@@ -1,6 +1,7 @@
 import csv
 import hashlib
 import io
+import logging
 import time
 from collections import Counter
 from pathlib import Path
@@ -30,17 +31,25 @@ from pipeline.exporter import (
 # STREAMLIT PERFORMANCE PROFILING
 # ============================================================
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s"
+)
+
+logger = logging.getLogger(__name__)
+
 APP_RERUN_START = time.perf_counter()
 
 
 def perf_log(stage_name, start_time):
-    """Print server-side Streamlit timing to the terminal."""
+    """Log Streamlit UI-stage execution time."""
 
     elapsed = time.perf_counter() - start_time
 
-    print(
-        f"[UI PERFORMANCE] {stage_name:<35} {elapsed:.4f} sec",
-        flush=True
+    logger.info(
+        "[UI PERFORMANCE] %-35s %.4f sec",
+        stage_name,
+        elapsed
     )
 
     return elapsed
@@ -50,6 +59,14 @@ def perf_log(stage_name, start_time):
 # ============================================================
 # UPLOAD VALIDATION
 # ============================================================
+
+# ============================================================
+# LARGE REVIEW DATASET SAFEGUARDS
+# ============================================================
+
+LARGE_REVIEW_WARNING_ROWS = 10_000
+REVIEW_PREVIEW_ROWS = 200
+
 
 REQUIRED_COLUMNS = [
     "Order_ID",
@@ -1258,8 +1275,8 @@ else:
     )
 
     score_col1.caption(
-        "Percentage of known post-cleaning issues "
-        "that have been resolved."
+        "Percentage of unresolved post-cleaning issues "
+        "that have been manually resolved."
     )
 
     score_col2.caption(
@@ -1359,6 +1376,60 @@ else:
         fig_cleaning,
         width='stretch'
     )
+
+    # ========================================================
+    # REMOVED DUPLICATE ROWS
+    # ========================================================
+
+    removed_duplicate_rows = (
+        result.get(
+            "removed_duplicate_rows"
+        )
+    )
+
+    if (
+        removed_duplicate_rows is not None
+        and not removed_duplicate_rows.empty
+    ):
+
+        st.info(
+            f"{len(removed_duplicate_rows):,} duplicate row(s) "
+            "were removed during automated cleaning."
+        )
+
+        duplicate_export_df = (
+            removed_duplicate_rows
+            .drop(
+                columns=[
+                    "Record_ID"
+                ],
+                errors="ignore"
+            )
+        )
+
+        removed_duplicates_csv = (
+            duplicate_export_df
+            .to_csv(
+                index=False
+            )
+            .encode(
+                "utf-8"
+            )
+        )
+
+        st.download_button(
+            label=(
+                "Download Removed Duplicate Rows"
+            ),
+            data=removed_duplicates_csv,
+            file_name=(
+                "removed_duplicate_rows.csv"
+            ),
+            mime="text/csv",
+            disabled=st.session_state[
+                "ui_busy"
+            ]
+        )
 
     # ========================================================
     # VALIDATION ANALYSIS
@@ -1736,6 +1807,36 @@ else:
             st.write(
                 "Records requiring review: "
                 f"**{len(review_df):,}**"
+            )
+
+            if (
+                len(review_df)
+                >= LARGE_REVIEW_WARNING_ROWS
+            ):
+
+                st.warning(
+                    "This review dataset is large. Manual correction "
+                    "may be time-consuming. Download the full review CSV "
+                    "and edit it offline before uploading the corrected "
+                    "file. Only a limited preview is shown in the app."
+                )
+
+            preview_rows = min(
+                len(review_df),
+                REVIEW_PREVIEW_ROWS
+            )
+
+            st.caption(
+                f"Previewing {preview_rows:,} of "
+                f"{len(review_df):,} review record(s)."
+            )
+
+            st.dataframe(
+                review_df.head(
+                    REVIEW_PREVIEW_ROWS
+                ),
+                width='stretch',
+                hide_index=True
             )
 
             st.info(

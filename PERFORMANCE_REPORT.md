@@ -3,6 +3,28 @@
 This report summarizes the stress-test, runtime, throughput, backend, UI, optimization, and reliability results collected during the development and validation of **CSV Data Guard**.
 
 ---
+## Benchmark Environment
+
+Performance measurements are representative and may vary depending on
+hardware, operating system, Python version, library versions, and system load.
+
+Test environment used for the reported benchmarks:
+
+- Operating System: Windows 11
+- OS Build: Windows-11-10.0.26300-SP0
+- Processor: Intel64 Family 6 Model 186 Stepping 3, GenuineIntel
+- Python: 3.13.9
+- pandas: 3.0.6
+- NumPy: 2.5.3
+- Pandera: 0.33.1
+- Benchmark method: median of repeated runs where applicable
+- Dataset sizes tested: 10K, 100K, 250K, and 500K rows
+- 500K CSV size: approximately 58.8 MB
+
+The reported timings should therefore be treated as representative
+performance observations rather than guaranteed execution times.
+
+---
 
 ## Performance Summary
 

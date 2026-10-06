@@ -1,3 +1,4 @@
+import logging
 import time
 
 import pandas as pd
@@ -8,7 +9,8 @@ from .profiler import (
 )
 
 from .cleaner import (
-    clean_data
+    clean_data,
+    get_removed_duplicate_rows
 )
 
 from .validator import (
@@ -32,18 +34,22 @@ from .problem_map import (
 )
 
 
+logger = logging.getLogger(__name__)
+
+
 # ============================================================
 # PIPELINE PERFORMANCE PROFILING
 # ============================================================
 
 def _perf_log(stage_name, start_time):
-    """Print pipeline-stage timing to the terminal."""
+    """Log pipeline-stage execution time."""
 
     elapsed = time.perf_counter() - start_time
 
-    print(
-        f"[PIPELINE PERFORMANCE] {stage_name:<35} {elapsed:.4f} sec",
-        flush=True
+    logger.info(
+        "[PIPELINE PERFORMANCE] %-35s %.4f sec",
+        stage_name,
+        elapsed
     )
 
     return elapsed
@@ -409,6 +415,12 @@ def _run_pipeline_core(
 
     stage_start = time.perf_counter()
 
+    removed_duplicate_rows = (
+        get_removed_duplicate_rows(
+            original_df
+        )
+    )
+
     (
         cleaned_df,
         cleaning_checks
@@ -669,6 +681,11 @@ def _run_pipeline_core(
                 cleaned_df
             ),
 
+        "removed_duplicate_rows":
+            len(
+                removed_duplicate_rows
+            ),
+
         "initial_unresolved_cleaning_issues":
             initial_unresolved_count,
 
@@ -749,6 +766,9 @@ def _run_pipeline_core(
 
         "cleaned_data":
             cleaned_df,
+
+        "removed_duplicate_rows":
+            removed_duplicate_rows,
 
         "cleaning_checks":
             cleaning_checks,
@@ -892,6 +912,13 @@ def apply_review_corrections(
         pipeline_result[
             "original_data"
         ]
+    )
+
+    removed_duplicate_rows = (
+        pipeline_result.get(
+            "removed_duplicate_rows",
+            pd.DataFrame()
+        )
     )
 
     # ========================================================
@@ -1159,6 +1186,11 @@ def apply_review_corrections(
                 corrected_df
             ),
 
+        "removed_duplicate_rows":
+            len(
+                removed_duplicate_rows
+            ),
+
         "initial_unresolved_cleaning_issues":
             initial_unresolved_count,
 
@@ -1244,6 +1276,9 @@ def apply_review_corrections(
 
         "corrected_data":
             corrected_df,
+
+        "removed_duplicate_rows":
+            removed_duplicate_rows,
 
 
         # ----------------------------------------------------
