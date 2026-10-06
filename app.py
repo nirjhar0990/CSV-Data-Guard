@@ -1248,7 +1248,7 @@ else:
     )
 
     score_col1.metric(
-        "Remediation Progress",
+        "Cleaning Score",
         f"{cleaning_score:.2f}%"
     )
 
@@ -1258,8 +1258,8 @@ else:
     )
 
     score_col1.caption(
-        "Percentage of unresolved post-cleaning issues "
-        "that have been manually resolved."
+        "Percentage of known post-cleaning issues "
+        "that have been resolved."
     )
 
     score_col2.caption(
@@ -1989,7 +1989,7 @@ else:
         )
 
         st.write(
-            "- Remediation Progress = 100%"
+            "- Cleaning Score = 100%"
         )
 
         st.write(
@@ -2001,7 +2001,7 @@ else:
         )
 
         export_col1.metric(
-            "Remediation Progress",
+            "Cleaning Score",
             f"{cleaning_score:.2f}%"
         )
 

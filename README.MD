@@ -1,31 +1,31 @@
 <p align="center">
-  <img src="assets/logo/csv_data_guard_shield_transparent.png"
-     width="110"
-     alt="CSV Data Guard Logo">
+  <img src="assets/logo/csv_data_guard_shield_transparent.png" width="110" alt="CSV Data Guard Logo">
 </p>
 
 <h1 align="center">CSV Data Guard</h1>
 
-<p align="center"><strong>Data Quality, Validation & Remediation Automation</strong></p>
+<p align="center">
+  <strong>Data Quality, Validation & Remediation Automation</strong>
+</p>
 
 <p align="center">
-A Python + Streamlit application for profiling, cleaning, validating, remediating,
-reporting, and safely exporting CSV datasets through a strict data-quality workflow.
+  A Python + Streamlit application for profiling, cleaning, validating, remediating,
+  reporting, and safely exporting CSV datasets through a controlled quality-gate workflow.
 </p>
 
 ---
 
 ## Live Demo
 
-Try the deployed application here: [CSV Data Guard](https://csv-data-guard.streamlit.app/)
+[Launch CSV Data Guard](https://csv-data-guard.streamlit.app/)
 
 ---
 
 ## Overview
 
-**CSV Data Guard** is a data-quality and ETL validation framework designed to process messy CSV datasets through a controlled and testable workflow.
+**CSV Data Guard** is a CSV data-quality automation tool designed to profile, clean, validate, remediate, and safely export messy CSV datasets through a controlled and testable workflow.
 
-Rather than cleaning a file and assuming the output is valid, the application separates:
+Rather than cleaning a file and assuming the result is valid, the application separates:
 
 - Profiling
 - Cleaning
@@ -44,7 +44,7 @@ Profile
   ↓
 Clean
   ↓
-Calculate Remediation Progress
+Calculate Cleaning Score
   ↓
 Validate
   ↓
@@ -67,17 +67,29 @@ Revalidate
 
 ## Why This Project?
 
-Real-world CSV datasets commonly contain missing values, duplicate rows, malformed emails, invalid dates, inconsistent casing, invalid categories, range violations, duplicate identifiers, and unresolved post-cleaning issues.
+Real-world CSV datasets commonly contain:
 
-A cleaning script may transform some of these values, but that does not guarantee that the resulting dataset satisfies all business and schema rules.
+- Missing values
+- Duplicate rows
+- Duplicate business identifiers
+- Malformed email addresses
+- Invalid dates
+- Inconsistent casing
+- Invalid categorical values
+- Invalid numeric values
+- Out-of-range values
+- Malformed IDs
+- Unresolved post-cleaning issues
 
-CSV Data Guard uses a controlled workflow:
+A traditional cleaning script may transform some of these values, but that does not guarantee that the resulting dataset satisfies all required rules.
+
+CSV Data Guard was built to demonstrate a **structured data-quality workflow inspired by production validation and remediation patterns**:
 
 **Profiling → Cleaning → Validation → Remediation → Quality Gate → Export**
 
 Automatic cleaning is intentionally conservative. Only safe and deterministic transformations are applied.
 
-For example, an invalid value such as `bad-email` is **not** reconstructed from the customer's name. It remains invalid until it is validated and, when necessary, corrected manually.
+For example, an invalid email value such as `bad-email` is **not** reconstructed from the customer's name. It remains invalid until validation detects it and, when necessary, the user corrects it manually.
 
 ---
 
@@ -122,12 +134,14 @@ The cleaner performs deterministic transformations including:
 - Numeric conversion
 - Supported date parsing
 - Email lowercasing
-- Known deterministic domain correction
+- Known deterministic email-domain correction
 - Supported age-format repair
+
+Unsafe transformations are deliberately avoided.
 
 ### Schema Validation
 
-The cleaned dataset is validated with **Pandera**.
+The cleaned dataset is validated using **Pandera**.
 
 Validation includes:
 
@@ -137,7 +151,8 @@ Validation includes:
 - Nullable and non-nullable fields
 - Numeric ranges
 - Allowed categorical values
-- Email syntax and domain
+- Email syntax
+- Expected email domain
 - Order ID format
 - Date validation
 
@@ -159,22 +174,22 @@ ORD-00001
 
 CSV Data Guard uses two independent quality metrics.
 
-### Remediation Progress
+### Cleaning Score
 
-Measures whether all known cleaning and remediation issues have been resolved.
+Measures how much of the known post-cleaning issue set has been resolved.
 
-**100% Remediation Progress** means every identified remediation issue has been handled.
+**Cleaning Score = 100%** means all identified cleaning/remediation issues have been resolved.
 
 ### Validation Score
 
 Measures the percentage of current rows that pass all configured validation rules.
 
-**100% Validation Score** means every current row satisfies the validation schema.
+**Validation Score = 100%** means every current row satisfies the validation schema.
 
-A dataset can therefore reach:
+A dataset can therefore have:
 
 ```text
-Remediation Progress = 100%
+Cleaning Score = 100%
 Validation Score = 93%
 ```
 
@@ -187,7 +202,7 @@ and still remain blocked from export.
 Final export is allowed only when all conditions are satisfied:
 
 ```text
-Remediation Progress = 100%
+Cleaning Score = 100%
 AND
 Validation Score = 100%
 AND
@@ -215,7 +230,7 @@ Review rules:
 - **`[MISSING]`** → required value is missing
 - **Populated invalid value** → manually replace it
 
-This reduces the risk of accidentally modifying valid data.
+This reduces the risk of accidentally modifying already-valid data.
 
 ---
 
@@ -223,7 +238,14 @@ This reduces the risk of accidentally modifying valid data.
 
 Corrections are merged using an internal `Record_ID`.
 
-Only originally problematic fields can be updated. Valid values, unrelated columns, and internal row identity remain protected.
+Only originally problematic fields can be updated.
+
+The merge process protects:
+
+- Valid values
+- Unrelated columns
+- Internal row identity
+- Non-problematic business fields
 
 `Order_ID` becomes editable only when its current value is invalid or duplicated.
 
@@ -231,7 +253,7 @@ Only originally problematic fields can be updated. Valid values, unrelated colum
 
 ## Multi-Round Remediation
 
-CSV Data Guard supports repeated correction cycles:
+CSV Data Guard supports repeated correction cycles.
 
 ```text
 Round 1
@@ -248,17 +270,19 @@ Remaining Issues
   ↓
 Final Corrections
   ↓
-100% Remediation Progress
-100% Validation Score
+Cleaning Score = 100%
+Validation Score = 100%
   ↓
 Export
 ```
+
+The process continues until the quality gate is satisfied.
 
 ---
 
 ## Data Quality Reporting
 
-The application reports unresolved issues including:
+The application reports unresolved issues such as:
 
 - Invalid email syntax
 - Invalid email domain
@@ -270,7 +294,7 @@ The application reports unresolved issues including:
 - Invalid categorical values
 - Unresolved cleaning problems
 
-When the current dataset is fully resolved, the application displays:
+When all current issues are resolved, the application displays:
 
 > **No data-quality issues remain in the current dataset.**
 
@@ -292,7 +316,7 @@ When the current dataset is fully resolved, the application displays:
 ## Project Architecture
 
 ```text
-CSV-Data-Cleaning-Automation/
+CSV-Data-Guard/
 │
 ├── assets/
 ├── data/
@@ -318,6 +342,7 @@ CSV-Data-Cleaning-Automation/
 │   │   ├── optimization_benchmarks/
 │   │   ├── performance_discovery_tests/
 │   │   ├── performance_tests/
+│   │   ├── __init__.py
 │   │   └── run_all_stress.py
 │   └── unit/
 │       ├── cleaner/
@@ -333,7 +358,8 @@ CSV-Data-Cleaning-Automation/
 ├── PERFORMANCE_REPORT.md
 ├── pytest.ini
 ├── README.md
-└── requirements.txt
+├── requirements.txt
+└── requirements-dev.txt
 ```
 
 ---
@@ -368,7 +394,9 @@ The orchestrator coordinates the workflow while the individual modules remain se
 
 ## Testing
 
-The project includes automated tests covering:
+The project includes automated tests across multiple layers.
+
+### Test Coverage Areas
 
 - Unit testing
 - Integration testing
@@ -385,37 +413,39 @@ The project includes automated tests covering:
 | Passed | 228 |
 | Failed | 0 |
 
-The Streamlit workflow was also tested manually through complete end-to-end remediation scenarios.
+The Streamlit workflow was also manually tested through complete end-to-end remediation scenarios.
 
 ---
 
 ## Pre-Production Defects Found During Testing
 
-End-to-end testing identified several workflow defects that were not obvious from isolated unit tests.
+End-to-end testing exposed several workflow defects that were not obvious from isolated unit testing.
 
 ### 1. Order_ID Remediation Dead-End
 
-An invalid `Order_ID` could block export while failing to appear in a later review dataset.
+A remaining invalid `Order_ID` could block export while failing to appear in the next review dataset.
 
-The review logic was changed so that `Order_ID` becomes editable only when the current value is invalid or duplicated.
+The review workflow was updated so that `Order_ID` becomes editable only when its current value is invalid or duplicated.
 
 ### 2. Over-Aggressive Email Reconstruction
 
-The cleaner originally reconstructed malformed email addresses from customer names.
+The cleaner originally reconstructed invalid email addresses using the customer name.
 
-That behaviour was removed because it could invent customer data. Invalid emails are now preserved for validation and manual remediation.
+This was considered unsafe because it could invent customer information.
 
-### 3. Historical Issues After Successful Remediation
+The cleaner was changed so invalid email addresses remain available for validation and manual remediation.
 
-The final UI previously displayed historical problems even after the current dataset passed the quality gate.
+### 3. Historical Issues Displayed After Successful Remediation
 
-The UI was changed so the final report reflects the **current dataset state**.
+The final report previously displayed historical issues even after the current dataset had been corrected.
+
+The UI was changed so that the final report reflects the **current dataset state only**.
 
 ### 4. Duplicate Correction Submission Risk
 
-Repeated correction submissions could trigger unintended workflow behaviour.
+Repeated correction submissions could create unintended workflow behaviour.
 
-A busy-state lock and correction request identifier were introduced to prevent duplicate submissions.
+A busy-state lock and correction request identifier were added to prevent duplicate correction submissions.
 
 ---
 
@@ -433,7 +463,7 @@ CSV Data Guard was tested with large CSV datasets.
 | Pipeline Exception | No |
 | UI Remained Responsive | Yes |
 
-Representative timings:
+Representative timings from the final smoke test:
 
 | Stage | Approx. Time |
 |---|---:|
@@ -442,9 +472,9 @@ Representative timings:
 | Backend Pipeline | ~8.2 sec |
 | Plotly Chart Construction | ~0.3 sec |
 
-Runtime varies with machine load and execution conditions.
+Runtime varies depending on hardware, operating-system load, filesystem cache, and other execution conditions.
 
-For detailed stress-test charts, optimization comparisons, and backend timing breakdowns, see:
+For detailed benchmark results, stress-test charts, backend timing breakdowns, and optimization comparisons, see:
 
 ### [View the Performance Report](PERFORMANCE_REPORT.md)
 
@@ -497,20 +527,9 @@ The retained benchmarks cover:
 - Review-generation performance
 - Pipeline performance
 
+These benchmarks are intended for controlled performance comparison rather than normal application execution.
+
 ---
-
-## Application Screenshots
-
-Store final screenshots under:
-
-```text
-assets/screenshots/
-```
-
-Recommended screenshots:
-
-
-
 
 ## Application Screenshots
 
@@ -532,7 +551,7 @@ Recommended screenshots:
 
 ---
 
-### 4 Manual Review & Apply Corrections
+### 4. Manual Review & Apply Corrections
 
 ![Manual Review & Apply Corrections](assets/screenshots/05_Apply_Corrections.png)
 
@@ -555,13 +574,13 @@ Recommended screenshots:
 Clone the repository:
 
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/nirjhar0990/CSV-Data-Guard.git
 ```
 
 Move into the project directory:
 
 ```bash
-cd CSV-Data-Cleaning-Automation
+cd CSV-Data-Guard
 ```
 
 Create a virtual environment:
@@ -582,10 +601,16 @@ python -m venv .venv
 source .venv/bin/activate
 ```
 
-Install dependencies:
+Install runtime dependencies:
 
 ```bash
 pip install -r requirements.txt
+```
+
+For development and testing:
+
+```bash
+pip install -r requirements-dev.txt
 ```
 
 ---
@@ -647,6 +672,7 @@ CSV Data Guard follows these engineering principles:
 | Automated Testing | ✅ Complete |
 | Performance Optimization | ✅ Complete |
 | 500K Smoke Testing | ✅ Complete |
+| Streamlit Deployment | ✅ Complete |
 
 ---
 
@@ -656,17 +682,19 @@ Potential future improvements include:
 
 - Configurable validation schemas
 - Dynamic column mapping
-- Additional text encodings
+- Support for additional text encodings
 - Database input and output
 - Cloud-storage integration
 - Email delivery
 - Downloadable PDF quality reports
 - Configurable remediation rules
+- Audit trail / downloadable change log
+- Removed-duplicate review export
+- Bulk remediation for large review sets
 - Docker deployment
 - CI/CD integration
-- Hosted demo deployment
 
-These are outside the current stable project scope.
+These features are outside the current stable project scope.
 
 ---
 
@@ -687,7 +715,7 @@ Python Developer | Data Quality Automation | Data Analysis
 
 ## Project Summary
 
-CSV Data Guard demonstrates an end-to-end data-quality workflow combining:
+CSV Data Guard demonstrates how the following capabilities can be combined into a single CSV data-quality application:
 
 - Data Profiling
 - Data Cleaning
@@ -698,4 +726,4 @@ CSV Data Guard demonstrates an end-to-end data-quality workflow combining:
 - Performance Optimization
 - Large-Scale CSV Processing
 
-The project focuses on building a reliable, testable, and measurable data-quality pipeline rather than only performing basic CSV transformations.
+The project focuses on building a reliable, testable, and measurable workflow for one defined CSV schema while keeping future generalization explicit rather than implied.
