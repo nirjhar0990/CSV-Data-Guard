@@ -1,0 +1,16 @@
+Order_ID,Customer_Name,Customer_Email,City,Category,Product,Quantity,Unit_Price,Discount,Total_Amount,Order_Date,Payment_Method,Order_Status,Customer_Age,Customer_Rating
+ORD-90001,Amit Banerjee,amit_banerjee@example.com,Kolkata,Books,Python Programming,2,1200.0,10.0,2160.0,2025-01-15,UPI,Completed,35,5
+ORD-90002,Priya Sharma,priya_sharma@example.com,Delhi,Electronics,Laptop,1,55000.0,5.0,52250.0,2025-01-20,Credit Card,Completed,29,4
+ORD-90003,Neha Ghosh,neha_ghosh@example.com,Mumbai,Groceries,Rice,5,80.0,0.0,400.0,2025-02-02,Cash,Completed,42,5
+ORD-90004,Arjun Banerjee,arjun_banerjee@example.com,Chennai,Furniture,Chair,2,3500.0,8.0,6440.0,2025-02-10,Debit Card,Pending,31,4
+ORD-90005,Sneha Roy,sneha_roy@example.com,Hyderabad,Sports,Tennis Racket,1,4200.0,12.0,3696.0,2025-02-18,Net Banking,Completed,27,5
+ORD-90006,Rahul Das,rahul_das@example.com,Pune,Clothing,T-Shirt,3,900.0,10.0,2430.0,2025-03-01,UPI,Returned,38,3
+ORD-90007,Ankit Roy,ankit_roy@example.com,Bangalore,Electronics,Headphones,2,2500.0,15.0,4250.0,2025-03-05,Credit Card,Completed,44,4
+ORD-90008,Riya Sen,riya_sen@example.com,Ahmedabad,Groceries,Milk,4,65.0,0.0,260.0,2025-03-12,Cash,Completed,24,5
+ORD-90009,Kunal Gupta,kunal_gupta@example.com,Kolkata,Furniture,Table,1,8000.0,7.5,7400.0,2025-03-20,Debit Card,Pending,46,4
+ORD-90010,Maya Roy,maya_roy@example.com,Delhi,Books,Data Science,2,1500.0,5.0,2850.0,2025-04-01,Net Banking,Completed,33,5
+ORD-90011,Vikram Shah,vikram_shah@example.com,Mumbai,Sports,Cricket Bat,1,3200.0,10.0,2880.0,2025-04-07,UPI,Completed,41,4
+ORD-90012,Pooja Singh,pooja_singh@example.com,Chennai,Clothing,Jeans,2,1800.0,20.0,2880.0,2025-04-14,Credit Card,Cancelled,30,3
+ORD-90013,Rohan Mehta,rohan_mehta@example.com,Hyderabad,Electronics,Tablet,1,22000.0,10.0,19800.0,2025-04-22,Debit Card,Completed,36,5
+ORD-90014,Sonia Das,sonia_das@example.com,Pune,Groceries,Cooking Oil,3,180.0,5.0,513.0,2025-05-03,Cash,Completed,28,4
+ORD-90015,Deepak Roy,deepak_roy@example.com,Bangalore,Furniture,Sofa,1,28000.0,12.0,24640.0,2025-05-11,Net Banking,Returned,49,4

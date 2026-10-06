@@ -1,0 +1,16 @@
+﻿Order_ID,Customer_Name,Customer_Email,City,Category,Product,Quantity,Unit_Price,Discount,Total_Amount,Order_Date,Payment_Method,Order_Status,Customer_Age,Customer_Rating
+ORD-00001,Arun Banerjee,arun.banerjee*example.com,Kolkata,Electronics,Laptop,1,65000,10,58500,10/01/2026,UPI,Completed,4@6,5
+ORD-00002,Riya@ Sen,riya_sen@example.com,Howrah,Clothing,Jeans,2,2200,5,4180,10/02/2026,credit card,Completed,29,4
+ORD-3,Soham Das,soham_das@example.com,Chandannagar,Sports,Football,3,1200,0,3600,31/12/2026,Cash,Pending,22,4
+ORD-00004,Moumita Ghosh,moumita_ghosh@example.com,Kolkata,groceries,Rice,5,650,145,2990,10/04/2026,Debit Card,Completed,41,5
+ORD-00005,Anik Dutta,anik_dutta@example.com,Serampore,Books,PYTHON PROGRAMMING,1,850,0,850,10/05/2026,Net Banking,Completed,31,-2
+ORD-00006,Sneha Roy,sneha_roy@example.com,,Furniture,Chair,2,-3200,12,5632,10/06/2026,UPI,Returned,27,3
+ORD-00007,Debjit Paul,debjit_paul@exampl.com,Kolkata,Electronics,Headphones,1,4500,15,3825,10/07/2026,Credit Card,completed,36,4
+ORD-00008,Ishita Bose,ishita_bose@example.com,Chinsurah,Clothing,T-Shirt,-4,900,10,3240,10/08/2026,Cash,Pending,_24,4
+ORD-00009,Abir# Saha,abir_saha@example.com,Bandel,Sports,Cricket Bat,1,2800,5,2660,10/09/2026,upi,Completed,33,5
+ORD-00009,Priyanka Mitra,priyanka_mitra@example.com,Kolkata,Furniture,Table,1,7800,7,-7254,10/10/2026,Debit Card,Completed,38,4
+ORD-00011,Rahul Nandi,rahul_nandi@example.com,Howrah,INVALID,Milk,6,65,0,390,bad-date,Cash,Completed,45,5
+ORD-00012,Tania Pal,tania_pal@example.COM,Chandannagar,Books,data science,2,950,10,1710,10/12/2026,Net Banking,Pending,26,4
+ORD-00013,Sayan Mukherjee,sayan_mukherjee@example.com,Serampore,Electronics,Tablet,1,28000,6,26320,10/13/2026,Credit Card,Completed,452,9
+ORD-00014,Nandini Kar,nandini_kar@example.com,Kolkata,Clothing,Jacket,2,3200,20,5120,10/14/2026,None,RETURNED,35,3
+ORD-00015,Aritra De,aritra_de@example.com,null,Sports,Basketball,abc,1800,0,1800,10/15/2026,Cash,Completed,28,4

@@ -1,0 +1,69 @@
+# Python bytecode / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Pytest cache
+.pytest_cache/
+
+# Coverage
+.coverage
+coverage.xml
+htmlcov/
+
+# VS Code
+.vscode/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environment / secrets
+.env
+.env.*
+*.env
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python build / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Type-check / lint caches
+.mypy_cache/
+.ruff_cache/
+
+# Streamlit local secrets
+.streamlit/secrets.toml
+
+# Local benchmark outputs / reports
+*.prof
+*.pstats
+benchmark_results/
+performance_results/
+
+# IDE / project-specific local files
+.idea/
+
+# Miscellaneous
+*.zip
+*.7z
