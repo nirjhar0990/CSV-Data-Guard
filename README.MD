@@ -15,6 +15,10 @@
 
 ---
 
+![Tests](https://github.com/nirjhar0990/CSV-Data-Guard/actions/workflows/tests.yml/badge.svg)
+
+---
+
 ## Live Demo
 
 [Launch CSV Data Guard](https://csv-data-guard.streamlit.app/)
