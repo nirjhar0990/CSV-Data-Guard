@@ -15,6 +15,14 @@ reporting, and safely exporting CSV datasets through a strict data-quality workf
 
 ---
 
+## Live Demo
+
+Try the deployed application here:
+
+[Launch CSV Data Guard](https://csv-data-guard.streamlit.app/)
+
+---
+
 ## Overview
 
 **CSV Data Guard** is a data-quality and ETL validation framework designed to process messy CSV datasets through a controlled and testable workflow.
