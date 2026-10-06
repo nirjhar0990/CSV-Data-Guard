@@ -20,12 +20,13 @@ schema = DataFrameSchema(
         # --------------------------------------------------------
 
         "Order_ID": Column(
-            pa.String,
-            checks=Check.str_matches(
-                r"^ORD-\d{5}$"
-            ),
-            nullable=False
-        ),
+        pa.String,
+        checks=Check.str_matches(
+        r"^ORD-\d{5}$"
+     ),
+        nullable=False,
+        unique=True
+    ),
 
         # --------------------------------------------------------
         # Customer Name

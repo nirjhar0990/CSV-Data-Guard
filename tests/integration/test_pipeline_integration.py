@@ -22,6 +22,11 @@ from pipeline.review import (
     REVIEW_MISSING_MARKER,
 )
 
+from pipeline.orchestrator import (
+    run_pipeline_from_dataframe,
+    apply_review_corrections,
+)
+
 
 # ============================================================
 # TEST DATA
@@ -851,4 +856,330 @@ def test_cleaning_checks_pass_through_pipeline():
 
     assert all(
         cleaning_checks.values()
+    )
+
+
+# ============================================================
+# 19. MANUAL ORDER_ID CORRECTION MUST NOT CREATE A DUPLICATE
+# ============================================================
+
+def test_manual_order_id_correction_that_creates_duplicate_keeps_gate_closed():
+    """
+    A user may correct an invalid Order_ID with a value that is
+    syntactically valid but already exists in another row.
+
+    The corrected dataset must be revalidated and the export
+    quality gate must remain closed.
+    """
+
+    raw_df = pd.DataFrame(
+        {
+            "Order_ID": [
+                "ORD-00001",
+                "BAD-ID",
+            ],
+            "Customer_Name": [
+                "Arun Das",
+                "Riya Sen",
+            ],
+            "Customer_Email": [
+                "arun.das@example.com",
+                "riya.sen@example.com",
+            ],
+            "City": [
+                "Kolkata",
+                "Howrah",
+            ],
+            "Category": [
+                "Electronics",
+                "Electronics",
+            ],
+            "Product": [
+                "Laptop",
+                "Laptop",
+            ],
+            "Quantity": [
+                "1",
+                "2",
+            ],
+            "Unit_Price": [
+                "50000",
+                "1000",
+            ],
+            "Discount": [
+                "10",
+                "5",
+            ],
+            "Total_Amount": [
+                "45000",
+                "1900",
+            ],
+            "Order_Date": [
+                "2026-01-01",
+                "2026-02-01",
+            ],
+            "Payment_Method": [
+                "Credit Card",
+                "UPI",
+            ],
+            "Order_Status": [
+                "Completed",
+                "Pending",
+            ],
+            "Customer_Age": [
+                "35",
+                "30",
+            ],
+            "Customer_Rating": [
+                "5",
+                "4",
+            ],
+        }
+    )
+
+    result = run_pipeline_from_dataframe(
+        raw_df
+    )
+
+    review_df = result[
+        "review_data"
+    ].copy()
+
+    target_mask = (
+        review_df[
+            "Record_ID"
+        ] == 2
+    )
+
+    assert target_mask.any()
+    assert "Order_ID" in review_df.columns
+
+    review_df.loc[
+        target_mask,
+        "Order_ID"
+    ] = "ORD-00001"
+
+    corrected_result = (
+        apply_review_corrections(
+            result,
+            review_df
+        )
+    )
+
+    corrected_df = corrected_result[
+        "corrected_data"
+    ]
+
+    assert (
+        corrected_df[
+            "Order_ID"
+        ]
+        .duplicated(
+            keep=False
+        )
+        .any()
+    )
+
+    assert (
+        corrected_result[
+            "validation"
+        ][
+            "success"
+        ]
+        is False
+    )
+
+    assert (
+        corrected_result[
+            "export_allowed"
+        ]
+        is False
+    )
+
+
+# ============================================================
+# 20. A CORRECTION CAN INTRODUCE A NEW VALIDATION FAILURE
+# ============================================================
+
+def test_correction_that_replaces_missing_email_with_invalid_email_keeps_gate_closed():
+    """
+    Filling a required missing value is not enough if the new
+    value violates another validation rule.
+
+    Example:
+        [MISSING] -> bad-email
+
+    The correction round must detect the new validation failure
+    and keep final export blocked.
+    """
+
+    raw_df = pd.DataFrame(
+        {
+            "Order_ID": [
+                "ORD-00001",
+                "ORD-00002",
+            ],
+            "Customer_Name": [
+                "Arun Das",
+                "Riya Sen",
+            ],
+            "Customer_Email": [
+                "arun.das@example.com",
+                "",
+            ],
+            "City": [
+                "Kolkata",
+                "Howrah",
+            ],
+            "Category": [
+                "Electronics",
+                "Electronics",
+            ],
+            "Product": [
+                "Laptop",
+                "Laptop",
+            ],
+            "Quantity": [
+                "1",
+                "2",
+            ],
+            "Unit_Price": [
+                "50000",
+                "1000",
+            ],
+            "Discount": [
+                "10",
+                "5",
+            ],
+            "Total_Amount": [
+                "45000",
+                "1900",
+            ],
+            "Order_Date": [
+                "2026-01-01",
+                "2026-02-01",
+            ],
+            "Payment_Method": [
+                "Credit Card",
+                "UPI",
+            ],
+            "Order_Status": [
+                "Completed",
+                "Pending",
+            ],
+            "Customer_Age": [
+                "35",
+                "30",
+            ],
+            "Customer_Rating": [
+                "5",
+                "4",
+            ],
+        }
+    )
+
+    result = run_pipeline_from_dataframe(
+        raw_df
+    )
+
+    review_df = result[
+        "review_data"
+    ].copy()
+
+    target_mask = (
+        review_df[
+            "Record_ID"
+        ] == 2
+    )
+
+    assert target_mask.any()
+    assert "Customer_Email" in review_df.columns
+
+    original_review_value = (
+        review_df.loc[
+            target_mask,
+            "Customer_Email"
+        ].iloc[0]
+    )
+
+    assert (
+        original_review_value
+        == REVIEW_MISSING_MARKER
+    )
+
+    review_df.loc[
+        target_mask,
+        "Customer_Email"
+    ] = "bad-email"
+
+    corrected_result = (
+        apply_review_corrections(
+            result,
+            review_df
+        )
+    )
+
+    corrected_row = (
+        corrected_result[
+            "corrected_data"
+        ]
+        .loc[
+            lambda df:
+                df["Record_ID"] == 2
+        ]
+        .iloc[0]
+    )
+
+    assert (
+        corrected_row[
+            "Customer_Email"
+        ]
+        == "bad-email"
+    )
+
+    assert (
+        corrected_result[
+            "validation"
+        ][
+            "success"
+        ]
+        is False
+    )
+
+    failure_cases = (
+        corrected_result[
+            "validation"
+        ][
+            "failure_cases"
+        ]
+    )
+
+    assert (
+        failure_cases is not None
+        and not failure_cases.empty
+    )
+
+    assert (
+        "Customer_Email"
+        in set(
+            failure_cases[
+                "column"
+            ]
+            .dropna()
+            .tolist()
+        )
+    )
+
+    assert (
+        corrected_result[
+            "validation_score"
+        ]
+        < 100.0
+    )
+
+    assert (
+        corrected_result[
+            "export_allowed"
+        ]
+        is False
     )
