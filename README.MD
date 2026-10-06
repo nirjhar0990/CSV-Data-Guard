@@ -301,13 +301,25 @@ CSV-Data-Cleaning-Automation/
 │   ├── reporting.py
 │   ├── review.py
 │   └── validator.py
+│
 ├── tests/
-│   └── stress/
-│       └── optimization_benchmarks/
+│   ├── edge_cases/
+│   ├── export/
+│   ├── failure_recovery/
+│   ├── integration/
+│   ├── remediation/
+│   ├── stress/
+│   │   ├── optimization_benchmarks/
+│   │   ├── performance_discovery_tests/
+│   │   ├── performance_tests/
+│   │   ├── __init__.py
+│   │   └── run_all_stress.py
+│   └── unit/
+│
 ├── app.py
 ├── .gitignore
 ├── LICENSE
-├── PERFORMANCE.md
+├── PERFORMANCE_REPORT.md
 ├── pytest.ini
 ├── README.md
 └── requirements.txt
@@ -657,7 +669,7 @@ See the [LICENSE](LICENSE) file for details.
 
 ## Author
 
-**Nirjhar Dutta**
+**Nirjhar Dutta**<br>
 Python Developer | Data Quality Automation | Data Analysis
 
 ---
