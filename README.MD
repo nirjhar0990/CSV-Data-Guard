@@ -17,9 +17,7 @@ reporting, and safely exporting CSV datasets through a strict data-quality workf
 
 ## Live Demo
 
-Try the deployed application here:
-
-[Launch CSV Data Guard](https://csv-data-guard.streamlit.app/)
+Try the deployed application here: [CSV Data Guard](https://csv-data-guard.streamlit.app/)
 
 ---
 
